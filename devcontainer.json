@@ -1,0 +1,16 @@
+{
+    "name": "Codespace with AWS CLI",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "aws-cli": "latest"
+    },
+    "customizations": {
+      "vscode": {
+        "settings": {},
+        "extensions": [
+          "amazonwebservices.aws-toolkit-vscode"
+        ]
+      }
+    }
+  }
+// This devcontainer.json file sets up a Codespace with the AWS CLI installed.  
