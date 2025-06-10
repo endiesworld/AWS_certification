@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+bucket_name="$1"
+if [ -z "$1" ]; then
+   read -p "Enter the S3 bucket name: " bucket_name
+fi
+
+read -p "Enter the AWS region (default: us-west-2): " aws_region
+aws_region=${aws_region:-us-west-2}
+
+if [ -z "$bucket_name" ]; then
+  echo "Bucket name is required."
+  exit 1
+fi
+
+aws  s3api create-bucket --bucket "$bucket_name" --region "$aws_region" --create-bucket-configuration LocationConstraint="$aws_region"
+echo "Bucket '$bucket_name' created successfully."
+aws s3 ls "s3://$bucket_name" --recursive | awk '{print $4}' | sort -u | while read -r file; do
+  echo "$file"
+done
