@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 bucket_name="$1"
-if [ -z "$1" ]; then
-   read -p "Enter the S3 bucket name to delete: " bucket_name
+
+
+if [ -z "$bucket_name" ]; then
+  echo "These are the buckets available in your AWS account:"
+  aws s3 ls | awk '{print $3}'
+  read -p "Please provide a valid bucket name to delete here: " bucket_name
 fi
 
 if [ -z "$bucket_name" ]; then
@@ -10,9 +14,28 @@ if [ -z "$bucket_name" ]; then
   exit 1
 fi
 
-aws s3api delete-bucket --bucket "$bucket_name" --region us-west-2
-# aws  s3api create-bucket --bucket "$bucket_name" --region us-west-2 --create-bucket-configuration LocationConstraint=us-west-2
-# echo "Bucket '$bucket_name' created successfully."
-# aws s3 ls "s3://$bucket_name" --recursive | awk '{print $4}' | sort -u | while read -r file; do
-#   echo "$file"
-# done
+read -p "Does the bucket '$bucket_name' contain versioning data? [Y/n]: " versioning_check
+
+if [[ "$versioning_check" == "Y" || "$versioning_check" == "y" || -z "$versioning_check" ]]; then
+  echo "Deleting all objects in the versioning bucket '$bucket_name'..."
+  aws s3api delete-objects --bucket $bucket_name \
+  --delete "$(aws s3api list-object-versions \
+      --bucket "$bucket_name" \
+      --output=json \
+      --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"
+
+elif [[ "$versioning_check" == "N" || "$versioning_check" == "n" ]]; then
+  echo "Deleting all objects in the bucket '$bucket_name'..."
+  aws s3 rm s3://$bucket_name --recursive
+
+else
+  echo "Invalid input. Please enter 'Y' or 'N'."
+  exit 1
+fi
+
+echo "Deleting the bucket '$bucket_name'..."
+aws s3api delete-bucket --bucket "$bucket_name"
+
+echo "You curently have the following buckets in your AWS account:"
+aws s3 ls | awk '{print $3}'
+
