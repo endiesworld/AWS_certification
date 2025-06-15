@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+bucket_name=$1
+
+if [[ -z "$bucket_name" ]]; then
+echo "These are the list of the bucket(s) in your account"
+aws s3 ls | awk '{print $3}'
+fi
+
+read -p "Please enter the name of the bucket you which to list the object: " bucket_name
+
+if [[ -z "$bucket_name" ]]; then 
+echo "Sorry, bucket name cannot be empty"
+exit 1
+fi
+
+echo "The objects in bucket "$bucket_name" "
+aws s3api list-objects-v2 --bucket "$bucket_name"
+
+echo "======  These are the keys to the objects ======"
+aws s3api list-objects-v2 --bucket "$bucket_name" --query 'Contents[].Key' --output text
