@@ -137,3 +137,66 @@ Delivers consistent single-digit millisecond data access for most frequently acc
 + 10X faster data access speed compared to standard
 + Request cost is 50% lower than standard
 + Data is stored in a single AZ.
+
+## S3 Storage Classes - Glacier & Glacier Vault
+
+Glacier is a stand-alone service that uses vaults over bucket to store data long term. Glaciers has a minimum storage days of 90, while Glacier Deep archive has a minomum storage days of 180days.
+
+## S3 Security-Block Public Access
+
+Block public access is a safety feature that is enabled by default to block all public access to an S3 bucket.
+
+## S3 Security-Access Control Lists(ACLs)
+
+ACLs grant basic read/write permissions to other AWS accounts.
+
++ you can grant permissions only to other AWS accounts
++ you cannot grant permissions to users in your account
++ you cannot grant conditional permissions
++ you cannot explicitly deny permissions
+
+## S3 Security- Bucket Policies
+
+S3 bucket policy is a resource-based policy to grant an S3 bucket and bucket objects to other Principles eg. AWS Accounts, Users, AWS services.
+
++ Create a bucket
+
+```sh
+aws s3 mb s3://emmanuel-bucket-policy-example-ab-5235
+```
+
++ Create bucket policy
+
+```sh
+aws s3api put-bucket-policy --bucket emmanuel-bucket-policy-example-ab-5235 --policy file//policy.json
+```
+
++ Access the bucket in the other account
+
+```sh
+touch client-account-file.txt
+aws s3 cp client-account-file.txt s3://emmanuel-bucket-policy-example-ab-5235
+aws s3 ls s3://emmanuel-bucket-policy-example-ab-5235
+```
+
+## S3 Security- Access Grants
+
+S3 access grants lets you map identities in a directory service (IAM Identify center, Active Directory, Okta) to access datasets in S3.
+
+## S3 Security- CORS
+
+S3 allows you to set CORS configuration to a S3 bucket with static website hosting so different origins can perform HTTP requests from your S3 Static website.
+
++ Create a bucket
+
+```sh
+aws s3 mb s3://emmanuel-bucket-cors-implementation
+```
+
++ change block public access
+
+```sh
+aws s3api put-public-access-block \
+--bucket s3://emmanuel-bucket-cors-implementation \
+--public-access-block-configuration "BlockPublickAcls=false,IgnorePublicAcls=true,BlockPublicPolicy=false,RestricPublicBuckets=false"
+```
