@@ -200,3 +200,18 @@ aws s3api put-public-access-block \
 --bucket s3://emmanuel-bucket-cors-implementation \
 --public-access-block-configuration "BlockPublickAcls=false,IgnorePublicAcls=true,BlockPublicPolicy=false,RestricPublicBuckets=false"
 ```
+
+## S3 Security- Encryption
+
+**Encryption In Transit:** Data is encrypted by the sender and then decrypted by the reciever via TLS or SSL.
+**Server Side Encryption:** Is always on foe all new S3 objects. Types:
+
++ SSE-S3: Amazon S3 manages the keys, encrypts using AES-GCM (256-bit) algorithm, and does the key rotations for you.
++ SSE-KMS: AWS Key Management Service (KMS), managed by AWS and you manage the keys. KMS can help meet regulatory compliance.
++ SSE-C: Customer provided key (you manage the keys), you need to provide the encryption key everytime you retrieve objects.
+
+## S3 - Data Consistency
+
+When data is being kept in two different place and whether the data exactly match or do not match.
+Amazon S3 offers strong consistency for all read, write, and delete operations.
+Strongly Consistent, means every time you request data(query) you can expect consistent data to be returned with x time (1 sec).
